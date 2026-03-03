@@ -1,12 +1,8 @@
-# Python
+tf_env/
 venv/
 api/venv/
+saved_models/
 __pycache__/
 *.pyc
-
-# React
+.idea/
 node_modules/
-frontend/node_modules/
-
-# Environment
-.env
