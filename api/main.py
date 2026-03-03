@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 # load model
-MODEL = tf.keras.models.load_model(r"C:\Users\arshi\Downloads\potato_model.keras")
+MODEL = tf.keras.models.load_model("potato_model.keras")
 
 # class names
 CLASS_NAMES = [
