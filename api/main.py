@@ -8,6 +8,13 @@ from io import BytesIO
 # create app
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow all for now
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Allow React frontend to connect
 origins = [
     "http://localhost:3000"
