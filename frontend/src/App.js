@@ -11,22 +11,40 @@ function App() {
   const [confidence, setConfidence] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const treatments = {
+    "Early Blight": [
+      "Remove infected leaves immediately",
+      "Use copper-based fungicides",
+      "Maintain proper plant spacing for airflow"
+    ],
+
+    "Late Blight": [
+      "Apply fungicides like chlorothalonil",
+      "Avoid overhead watering",
+      "Remove severely infected plants"
+    ],
+
+    "Healthy": [
+      "Your plant looks healthy",
+      "Continue proper watering and sunlight",
+      "Monitor leaves regularly for early signs"
+    ]
+  };
+
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
 
     setFile(selectedFile);
     setPreview(URL.createObjectURL(selectedFile));
+
     setResult("");
     setConfidence("");
   };
 
   const handleUpload = async () => {
 
-    if (!file) {
-      alert("Please select an image first!");
-      return;
-    }
+    if (!file) return;
 
     setLoading(true);
 
@@ -34,8 +52,9 @@ function App() {
     formData.append("file", file);
 
     try {
+
       const response = await axios.post(
-        "http://127.0.0.1:8000/predict",
+        "https://potato-disease-app-production.up.railway.app/predict",
         formData,
         {
           headers: {
@@ -58,13 +77,20 @@ function App() {
 
       setResult(disease);
       setConfidence((response.data.confidence * 100).toFixed(2));
-    }
-    catch (error) {
+
+    } catch (error) {
       alert("Prediction failed! Check backend.");
       console.error(error);
     }
 
     setLoading(false);
+  };
+
+  const clearAll = () => {
+    setFile(null);
+    setPreview(null);
+    setResult("");
+    setConfidence("");
   };
 
   return (
@@ -76,45 +102,102 @@ function App() {
         backgroundPosition: "center"
       }}
     >
+
       <div className="card">
 
-        <h2>Potato Disease Detection</h2>
+        {/* Heading */}
+        <h2>
+          Potato Plant <br/> Disease Detection
+        </h2>
 
-        <input type="file" onChange={handleFileChange} />
+        {/* Subtitle */}
+        <p className="subtitle">
+          Upload a potato leaf image to detect plant diseases instantly
+        </p>
 
+        {/* Upload Button */}
+        <label className="upload-btn">
+          Select Image
+          <input
+            type="file"
+            onChange={handleFileChange}
+            hidden
+          />
+        </label>
 
+        {/* Image Preview */}
+        {preview && (
+          <img
+            src={preview}
+            alt="preview"
+            className="preview"
+          />
+        )}
 
-        <br /><br />
+        {/* Buttons */}
+        {preview && (
+          <div className="button-group">
 
-        <button onClick={handleUpload}>
-          {loading ? "Predicting..." : "Predict"}
-        </button>
+            <button
+              className="predict-btn"
+              onClick={handleUpload}
+            >
+              {loading ? (
+                <span className="loader"></span>
+              ) : (
+                "Predict Disease"
+              )}
+            </button>
 
+            <button
+              className="clear-btn"
+              onClick={clearAll}
+            >
+              Clear
+            </button>
+
+          </div>
+        )}
+
+        {/* Result */}
         {result && (
-  <div className="result-card">
+          <div className="result-card">
 
-    <img
-      src={preview}
-      alt="leaf"
-      className="result-img"
-    />
+            <img
+              src={preview}
+              alt="leaf"
+              className="result-img"
+            />
 
-    <div className="result-info">
-      <div>
-        <div className="label-text">Label:</div>
-        <div className="value-text">{result}</div>
+            <div className="result-info">
+
+              <div>
+                <div className="label-text">Label</div>
+                <div className="value-text">{result}</div>
+              </div>
+
+              <div>
+                <div className="label-text">Confidence</div>
+                <div className="value-text">{confidence}%</div>
+              </div>
+
+            </div>
+
+            {/* Treatment Suggestions */}
+            <div className="treatment">
+              <div className="label-text">Recommended Actions</div>
+              <ul>
+                {treatments[result]?.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+        )}
+
       </div>
 
-      <div>
-        <div className="label-text">Confidence:</div>
-        <div className="value-text">{confidence}%</div>
-      </div>
-    </div>
-
-  </div>
-)}
-
-      </div>
     </div>
   );
 }
