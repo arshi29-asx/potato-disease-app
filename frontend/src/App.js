@@ -5,201 +5,235 @@ import bg from "./assets/bg.jpg";
 
 function App() {
 
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [result, setResult] = useState("");
-  const [confidence, setConfidence] = useState("");
-  const [loading, setLoading] = useState(false);
+const [file, setFile] = useState(null);
+const [preview, setPreview] = useState(null);
+const [result, setResult] = useState("");
+const [confidence, setConfidence] = useState("");
+const [loading, setLoading] = useState(false);
 
-  const treatments = {
-    "Early Blight": [
-      "Remove infected leaves immediately",
-      "Use copper-based fungicides",
-      "Maintain proper plant spacing for airflow"
-    ],
+const treatments = {
+"Early Blight": [
+"Remove infected leaves immediately",
+"Use copper-based fungicides",
+"Maintain proper plant spacing for airflow"
+],
 
-    "Late Blight": [
-      "Apply fungicides like chlorothalonil",
-      "Avoid overhead watering",
-      "Remove severely infected plants"
-    ],
+```
+"Late Blight": [
+  "Apply fungicides like chlorothalonil",
+  "Avoid overhead watering",
+  "Remove severely infected plants"
+],
 
-    "Healthy": [
-      "Your plant looks healthy",
-      "Continue proper watering and sunlight",
-      "Monitor leaves regularly for early signs"
-    ]
-  };
+"Healthy": [
+  "Your plant looks healthy",
+  "Continue proper watering and sunlight",
+  "Monitor leaves regularly for early signs"
+]
+```
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (!selectedFile) return;
+};
 
-    setFile(selectedFile);
-    setPreview(URL.createObjectURL(selectedFile));
+const diseaseInfo = {
+"Early Blight":
+"Early blight is a common potato disease caused by the fungus Alternaria solani. It appears as dark circular spots on leaves and can reduce crop yield if not treated early.",
 
-    setResult("");
-    setConfidence("");
-  };
+```
+"Late Blight":
+  "Late blight is a serious potato disease caused by the pathogen Phytophthora infestans. It spreads quickly in cool and humid conditions and can destroy crops rapidly.",
 
-  const handleUpload = async () => {
+"Healthy":
+  "The potato leaf appears healthy with no visible signs of disease. Continue monitoring the plant and maintain proper watering and sunlight."
+```
 
-    if (!file) return;
+};
 
-    setLoading(true);
+const handleFileChange = (e) => {
+const selectedFile = e.target.files[0];
+if (!selectedFile) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
+```
+setFile(selectedFile);
+setPreview(URL.createObjectURL(selectedFile));
 
-    try {
+setResult("");
+setConfidence("");
+```
 
-      const response = await axios.post(
-        "https://potato-disease-app-production.up.railway.app/predict",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+};
 
-      let disease = response.data.class;
+const handleUpload = async () => {
 
-      if (disease === "Potato___Early_blight") {
-        disease = "Early Blight";
-      }
-      else if (disease === "Potato___Late_blight") {
-        disease = "Late Blight";
-      }
-      else {
-        disease = "Healthy";
-      }
+```
+if (!file) return;
 
-      setResult(disease);
-      setConfidence((response.data.confidence * 100).toFixed(2));
+setLoading(true);
 
-    } catch (error) {
-      alert("Prediction failed! Check backend.");
-      console.error(error);
+const formData = new FormData();
+formData.append("file", file);
+
+try {
+
+  const response = await axios.post(
+    "https://potato-disease-app-production.up.railway.app/predict",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }
+  );
 
-    setLoading(false);
-  };
+  let disease = response.data.class;
 
-  const clearAll = () => {
-    setFile(null);
-    setPreview(null);
-    setResult("");
-    setConfidence("");
-  };
+  if (disease === "Potato___Early_blight") {
+    disease = "Early Blight";
+  }
+  else if (disease === "Potato___Late_blight") {
+    disease = "Late Blight";
+  }
+  else {
+    disease = "Healthy";
+  }
 
-  return (
-    <div
-      className="app"
-      style={{
-        backgroundImage: `url(${bg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center"
-      }}
-    >
+  setResult(disease);
+  setConfidence((response.data.confidence * 100).toFixed(2));
 
-      <div className="card">
+} catch (error) {
+  alert("Prediction failed! Check backend.");
+  console.error(error);
+}
 
-        {/* Heading */}
-        <h2>
-          Potato Plant <br/> Disease Detection
-        </h2>
+setLoading(false);
+```
 
-        {/* Subtitle */}
-        <p className="subtitle">
-          Upload a potato leaf image to detect plant diseases instantly
-        </p>
+};
 
-        {/* Upload Button */}
-        <label className="upload-btn">
-          Select Image
-          <input
-            type="file"
-            onChange={handleFileChange}
-            hidden
-          />
-        </label>
+const clearAll = () => {
+setFile(null);
+setPreview(null);
+setResult("");
+setConfidence("");
+};
 
-        {/* Image Preview */}
-        {preview && (
-          <img
-            src={preview}
-            alt="preview"
-            className="preview"
-          />
-        )}
+return (
+<div
+className="app"
+style={{
+backgroundImage: `url(${bg})`,
+backgroundSize: "cover",
+backgroundPosition: "center"
+}}
+>
 
-        {/* Buttons */}
-        {preview && (
-          <div className="button-group">
+```
+  <div className="card">
 
-            <button
-              className="predict-btn"
-              onClick={handleUpload}
-            >
-              {loading ? (
-                <span className="loader"></span>
-              ) : (
-                "Predict Disease"
-              )}
-            </button>
+    <h2>
+      Potato Plant <br/> Disease Detection
+    </h2>
 
-            <button
-              className="clear-btn"
-              onClick={clearAll}
-            >
-              Clear
-            </button>
+    <p className="subtitle">
+      Upload a potato leaf image to detect plant diseases instantly
+    </p>
 
-          </div>
-        )}
+    {/* Upload Button ONLY when no image selected */}
+    {!preview && (
+      <label className="upload-btn">
+        Select Image
+        <input
+          type="file"
+          onChange={handleFileChange}
+          hidden
+        />
+      </label>
+    )}
 
-        {/* Result */}
-        {result && (
-          <div className="result-card">
+    {/* Image Preview */}
+    {preview && (
+      <img
+        src={preview}
+        alt="preview"
+        className="preview"
+      />
+    )}
 
-            <img
-              src={preview}
-              alt="leaf"
-              className="result-img"
-            />
+    {/* Predict + Clear Buttons */}
+    {preview && (
+      <div className="button-group">
 
-            <div className="result-info">
+        <button
+          className="predict-btn"
+          onClick={handleUpload}
+        >
+          {loading ? (
+            <span>
+              <span className="loader"></span> AI analyzing plant health...
+            </span>
+          ) : (
+            "Predict Disease"
+          )}
+        </button>
 
-              <div>
-                <div className="label-text">Label</div>
-                <div className="value-text">{result}</div>
-              </div>
-
-              <div>
-                <div className="label-text">Confidence</div>
-                <div className="value-text">{confidence}%</div>
-              </div>
-
-            </div>
-
-            {/* Treatment Suggestions */}
-            <div className="treatment">
-              <div className="label-text">Recommended Actions</div>
-              <ul>
-                {treatments[result]?.map((tip, index) => (
-                  <li key={index}>{tip}</li>
-                ))}
-              </ul>
-            </div>
-
-          </div>
-        )}
+        <button
+          className="clear-btn"
+          onClick={clearAll}
+        >
+          Clear
+        </button>
 
       </div>
+    )}
 
-    </div>
-  );
+    {/* Result */}
+    {result && (
+      <div className="result-card">
+
+        <img
+          src={preview}
+          alt="leaf"
+          className="result-img"
+        />
+
+        <div className="result-info">
+
+          <div>
+            <div className="label-text">Disease</div>
+            <div className="value-text">{result}</div>
+          </div>
+
+          <div>
+            <div className="label-text">Confidence</div>
+            <div className="value-text">{confidence}%</div>
+          </div>
+
+        </div>
+
+        {/* Disease Explanation */}
+        <div className="disease-info">
+          <div className="label-text">About this Disease</div>
+          <p>{diseaseInfo[result]}</p>
+        </div>
+
+        {/* Treatment Suggestions */}
+        <div className="treatment">
+          <div className="label-text">Recommended Actions</div>
+          <ul>
+            {treatments[result]?.map((tip, index) => (
+              <li key={index}>{tip}</li>
+            ))}
+          </ul>
+        </div>
+
+      </div>
+    )}
+
+  </div>
+
+</div>
+```
+
+);
 }
 
 export default App;
