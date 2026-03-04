@@ -76,12 +76,7 @@ try {
 
   const response = await axios.post(
     "https://potato-disease-app-production.up.railway.app/predict",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
+    formData
   );
 
   let disease = response.data.class;
@@ -100,8 +95,10 @@ try {
   setConfidence((response.data.confidence * 100).toFixed(2));
 
 } catch (error) {
-  alert("Prediction failed! Check backend.");
-  console.error(error);
+
+  console.error("Prediction error:", error);
+  alert("Prediction failed. Please try again.");
+
 }
 
 setLoading(false);
@@ -137,7 +134,6 @@ backgroundPosition: "center"
       Upload a potato leaf image to detect plant diseases instantly
     </p>
 
-    {/* Upload Button ONLY when no image selected */}
     {!preview && (
       <label className="upload-btn">
         Select Image
@@ -149,7 +145,6 @@ backgroundPosition: "center"
       </label>
     )}
 
-    {/* Image Preview */}
     {preview && (
       <img
         src={preview}
@@ -158,7 +153,6 @@ backgroundPosition: "center"
       />
     )}
 
-    {/* Predict + Clear Buttons */}
     {preview && (
       <div className="button-group">
 
@@ -185,7 +179,6 @@ backgroundPosition: "center"
       </div>
     )}
 
-    {/* Result */}
     {result && (
       <div className="result-card">
 
@@ -209,13 +202,11 @@ backgroundPosition: "center"
 
         </div>
 
-        {/* Disease Explanation */}
         <div className="disease-info">
           <div className="label-text">About this Disease</div>
           <p>{diseaseInfo[result]}</p>
         </div>
 
-        {/* Treatment Suggestions */}
         <div className="treatment">
           <div className="label-text">Recommended Actions</div>
           <ul>
@@ -237,3 +228,4 @@ backgroundPosition: "center"
 }
 
 export default App;
+
