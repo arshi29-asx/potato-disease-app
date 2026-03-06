@@ -138,10 +138,11 @@ backgroundPosition: "center"
       <label className="upload-btn">
         Select Image
         <input
-          type="file"
-          onChange={handleFileChange}
-          hidden
-        />
+  type="file"
+  accept="image/*"
+  onChange={handleFileChange}
+  hidden
+/>
       </label>
     )}
 
@@ -159,6 +160,7 @@ backgroundPosition: "center"
         <button
           className="predict-btn"
           onClick={handleUpload}
+          disabled={loading}
         >
           {loading ? (
             <span>
