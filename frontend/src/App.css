@@ -205,3 +205,28 @@ margin-right:6px;
 0%{transform:rotate(0deg);}
 100%{transform:rotate(360deg);}
 }
+
+.samples{
+  margin-top:20px;
+  text-align:center;
+}
+
+.sample-images{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.sample-images img{
+  width:70px;
+  height:70px;
+  object-fit:cover;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.sample-images img:hover{
+  transform:scale(1.1);
+}

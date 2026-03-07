@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./App.css";
 import bg from "./assets/bg.jpg";
+import early from "./assets/early.jpg";
+import late from "./assets/late.jpg";
+import healthy from "./assets/healthy.jpg";
 
 function App() {
 
@@ -48,9 +51,24 @@ function App() {
     if (!selectedFile) return;
 
     setFile(selectedFile);
+    setPreview(URL.createObjectURL(selectedFile));
 
-    const imageUrl = URL.createObjectURL(selectedFile);
-    setPreview(imageUrl);
+    setResult("");
+    setConfidence("");
+  };
+
+  // ⭐ Sample image loader
+  const handleSample = async (img) => {
+
+    const response = await fetch(img);
+    const blob = await response.blob();
+
+    const file = new File([blob], "sample.jpg", {
+      type: "image/jpeg",
+    });
+
+    setFile(file);
+    setPreview(img);
 
     setResult("");
     setConfidence("");
@@ -123,7 +141,7 @@ function App() {
           Upload a potato leaf image to detect plant diseases instantly
         </p>
 
-        {/* Show upload button ONLY when no image selected */}
+        {/* Upload button */}
         {!preview && (
           <label className="upload-btn">
             Select Image
@@ -134,6 +152,37 @@ function App() {
               hidden
             />
           </label>
+        )}
+
+        {/* ⭐ Sample images */}
+        {!preview && (
+          <div className="samples">
+
+            <p>or try a sample image</p>
+
+            <div className="sample-images">
+
+              <img
+                src={early}
+                alt="Early Blight"
+                onClick={() => handleSample(early)}
+              />
+
+              <img
+                src={late}
+                alt="Late Blight"
+                onClick={() => handleSample(late)}
+              />
+
+              <img
+                src={healthy}
+                alt="Healthy"
+                onClick={() => handleSample(healthy)}
+              />
+
+            </div>
+
+          </div>
         )}
 
         {/* Preview Image */}
